@@ -6,6 +6,11 @@ export type Player = {
   position: string
   height_cm: number
   age: number
+  goals: number
+  assists: number
+  clean_sheets: number
+  yellow_cards: number
+  red_cards: number
 }
 
 export type PlayerListResponse = {
