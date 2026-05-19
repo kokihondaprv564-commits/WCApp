@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "name": "Sample Player",
+    "country": "Sampleland",
+    "position": "MF",
+    "height_cm": 180,
+    "age": 25
+  }
+]
