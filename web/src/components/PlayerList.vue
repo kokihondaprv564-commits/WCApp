@@ -1,41 +1,50 @@
 <template>
-  <section>
-    <h2>Players</h2>
+  <section class="players-shell">
+    <header class="topbar">
+      <h2>選手一覧</h2>
+      <div class="search-row">
+        <input v-model="quick" @keyup.enter="onQuickSearch" placeholder="選手名やクラブで検索（Enterで実行）" class="quick-input" />
+        <button @click="showAdvanced = !showAdvanced" class="btn">詳細</button>
+        <button @click="onSearch" class="btn primary">検索</button>
+      </div>
+      <div v-if="showAdvanced" class="advanced">
+        <form @submit.prevent="onSearch" class="search-form">
+          <input v-model="filters.name" placeholder="名前（部分一致）" />
+          <input v-model="filters.club" placeholder="所属クラブ（部分一致）" />
+          <input v-model="filters.country" placeholder="国（完全一致）" />
+          <select v-model="filters.position">
+            <option value="">全てのポジション</option>
+            <option value="GK">GK</option>
+            <option value="DF">DF</option>
+            <option value="MF">MF</option>
+            <option value="FW">FW</option>
+          </select>
+          <input type="number" v-model.number="filters.min_height" placeholder="最小身長(cm)" />
+          <input type="number" v-model.number="filters.max_height" placeholder="最大身長(cm)" />
+          <input type="number" v-model.number="filters.min_age" placeholder="最小年齢" />
+          <input type="number" v-model.number="filters.max_age" placeholder="最大年齢" />
+        </form>
+      </div>
+    </header>
 
-    <form @submit.prevent="onSearch" class="search-form">
-      <input v-model="filters.name" placeholder="名前（部分一致）" />
-      <input v-model="filters.club" placeholder="所属クラブ（部分一致）" />
-      <input v-model="filters.country" placeholder="国（完全一致）" />
-      <select v-model="filters.position">
-        <option value="">全てのポジション</option>
-        <option value="GK">GK</option>
-        <option value="DF">DF</option>
-        <option value="MF">MF</option>
-        <option value="FW">FW</option>
-      </select>
-      <input type="number" v-model.number="filters.min_height" placeholder="最小身長(cm)" />
-      <input type="number" v-model.number="filters.max_height" placeholder="最大身長(cm)" />
-      <input type="number" v-model.number="filters.min_age" placeholder="最小年齢" />
-      <input type="number" v-model.number="filters.max_age" placeholder="最大年齢" />
-      <button type="submit">検索</button>
-    </form>
+    <p v-if="loading" class="loading">ロード中…</p>
+    <p v-if="error" class="error">{{ error }}</p>
 
-    <p v-if="loading">ロード中…</p>
-    <p v-if="error" style="color: red">{{ error }}</p>
+    <div class="grid">
+      <PlayerCard v-for="p in players" :key="p.id" :player="p" @select="openPlayer" />
+    </div>
 
-    <ul>
-      <li v-for="p in players" :key="p.id">
-        {{ p.name }} — {{ p.club }} — {{ p.country }} ({{ p.position }}) — {{ p.height_cm }}cm — {{ p.age }}歳
-      </li>
-    </ul>
+    <p v-if="total !== null" class="total">合計：{{ total }}</p>
 
-    <p v-if="total !== null">合計：{{ total }}</p>
+    <PlayerDetail :player="selectedPlayer" v-if="showDetail" @close="closeDetail" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { searchPlayers, Player, PlayerQueryParams } from '../services/playerService'
+import PlayerCard from './PlayerCard.vue'
+import PlayerDetail from './PlayerDetail.vue'
 
 type Filters = PlayerQueryParams & { name?: string; country?: string; position?: string }
 
@@ -54,6 +63,11 @@ const filters = ref<Filters>({
   min_age: undefined,
   max_age: undefined,
 })
+
+const quick = ref('')
+const showAdvanced = ref(false)
+const selectedPlayer = ref<Player | null>(null)
+const showDetail = ref(false)
 
 async function fetchWithFilters(params: PlayerQueryParams) {
   loading.value = true
@@ -85,6 +99,21 @@ function buildQueryFromFilters(f: Filters): PlayerQueryParams {
 async function onSearch() {
   const params = buildQueryFromFilters(filters.value)
   await fetchWithFilters(params)
+}
+
+function onQuickSearch() {
+  filters.value.name = quick.value
+  onSearch()
+}
+
+function openPlayer(player: Player) {
+  selectedPlayer.value = player
+  showDetail.value = true
+}
+
+function closeDetail() {
+  showDetail.value = false
+  selectedPlayer.value = null
 }
 
 onMounted(() => {
