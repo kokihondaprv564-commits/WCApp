@@ -4,6 +4,7 @@
     "name": "Sample Player",
     "country": "Sampleland",
     "position": "MF",
+    "club": "Sample FC",
     "height_cm": 180,
     "age": 25
   }

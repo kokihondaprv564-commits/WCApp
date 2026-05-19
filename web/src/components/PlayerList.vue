@@ -4,6 +4,7 @@
 
     <form @submit.prevent="onSearch" class="search-form">
       <input v-model="filters.name" placeholder="名前（部分一致）" />
+      <input v-model="filters.club" placeholder="所属クラブ（部分一致）" />
       <input v-model="filters.country" placeholder="国（完全一致）" />
       <select v-model="filters.position">
         <option value="">全てのポジション</option>
@@ -24,7 +25,7 @@
 
     <ul>
       <li v-for="p in players" :key="p.id">
-        {{ p.name }} — {{ p.country }} ({{ p.position }}) — {{ p.height_cm }}cm — {{ p.age }}歳
+        {{ p.name }} — {{ p.club }} — {{ p.country }} ({{ p.position }}) — {{ p.height_cm }}cm — {{ p.age }}歳
       </li>
     </ul>
 
@@ -45,6 +46,7 @@ const error = ref<string | null>(null)
 
 const filters = ref<Filters>({
   name: '',
+  club: '',
   country: '',
   position: '',
   min_height: undefined,
@@ -72,6 +74,7 @@ function buildQueryFromFilters(f: Filters): PlayerQueryParams {
   if (f.name && f.name.trim() !== '') out.name = f.name.trim()
   if (f.country && f.country.trim() !== '') out.country = f.country.trim()
   if (f.position && f.position.trim() !== '') out.position = f.position.trim()
+  if (f.club && f.club.trim() !== '') out.club = f.club.trim()
   if (typeof f.min_height === 'number' && !Number.isNaN(f.min_height)) out.min_height = f.min_height
   if (typeof f.max_height === 'number' && !Number.isNaN(f.max_height)) out.max_height = f.max_height
   if (typeof f.min_age === 'number' && !Number.isNaN(f.min_age)) out.min_age = f.min_age

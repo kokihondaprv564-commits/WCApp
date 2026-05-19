@@ -2,6 +2,7 @@ export type Player = {
   id: number
   name: string
   country: string
+  club: string
   position: string
   height_cm: number
   age: number
@@ -15,6 +16,7 @@ export type PlayerListResponse = {
 export type PlayerQueryParams = Partial<{
   name: string
   country: string
+  club: string
   position: string
   min_height: number
   max_height: number

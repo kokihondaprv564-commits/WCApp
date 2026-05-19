@@ -6,6 +6,7 @@ class Player(BaseModel):
     id: int
     name: str
     country: str
+    club: str
     position: str
     height_cm: int
     age: int

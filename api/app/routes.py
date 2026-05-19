@@ -11,6 +11,7 @@ async def get_players(
     name: Optional[str] = Query(None, description="部分一致検索: 名前"),
     country: Optional[str] = Query(None, description="国名（完全一致、case-insensitive）"),
     position: Optional[str] = Query(None, description="ポジション（例: MF, FW）"),
+    club: Optional[str] = Query(None, description="所属クラブ（部分一致）"),
     min_height: Optional[int] = Query(None, ge=0, description="最小身長(cm)"),
     max_height: Optional[int] = Query(None, ge=0, description="最大身長(cm)"),
     min_age: Optional[int] = Query(None, ge=0, description="最小年齢"),
@@ -22,6 +23,7 @@ async def get_players(
         players, total = await search_players(
             name=name,
             country=country,
+            club=club,
             position=position,
             min_height=min_height,
             max_height=max_height,

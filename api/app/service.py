@@ -6,6 +6,7 @@ from .schemas import Player
 async def search_players(
     name: Optional[str] = None,
     country: Optional[str] = None,
+    club: Optional[str] = None,
     position: Optional[str] = None,
     min_height: Optional[int] = None,
     max_height: Optional[int] = None,
@@ -24,6 +25,9 @@ async def search_players(
                 continue
         if country:
             if country.lower() != p.get("country", "").lower():
+                continue
+        if club:
+            if club.lower() not in p.get("club", "").lower():
                 continue
         if position:
             if position.lower() != p.get("position", "").lower():
